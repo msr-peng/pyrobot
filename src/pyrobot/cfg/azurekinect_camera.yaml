@@ -1,0 +1,4 @@
+CAMERA:
+  ROSTOPIC_CAMERA_INFO_STREAM: '/rgb/camera_info'
+  ROSTOPIC_CAMERA_RGB_STREAM: '/rgb/image_raw'
+  ROSTOPIC_CAMERA_DEPTH_STREAM: '/depth_to_rgb/image_raw'
