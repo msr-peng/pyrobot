@@ -4,12 +4,12 @@
 # LICENSE file in the root directory of this source tree.
 
 
-from pyrobot.kinect2.camera import Kinect2Camera
+from pyrobot.locobot.camera import LoCoBotCamera
 
 
-class AzureKinectCamera(Kinect2Camera):
+class AzureKinectCamera(LoCoBotCamera):
     """
-    This is camera class that interfaces with the KinectV2 camera
+    This is camera class that interfaces with the Azure Kinect camera
     """
 
     def __init__(self, configs):
