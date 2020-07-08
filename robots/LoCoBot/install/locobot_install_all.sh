@@ -102,6 +102,10 @@ declare -a package_names=(
 	"libusb-1.0-0-dev"
 	"libgtk-3-dev" 
 	"libglfw3-dev"
+	"curl"
+	"wget"
+	"gnupg2"
+	"software-properties-common"
 	)
 install_packages "${package_names[@]}"
 
@@ -177,37 +181,29 @@ install_packages "${ros_package_names[@]}"
 
 if [ $INSTALL_TYPE == "full" ]; then
 
-	# STEP 4 - Install camera (Intel Realsense D435)
+	# STEP 4 - Install camera (Azure Kinect)
 	echo "Installing camera dependencies..."
 
-	# STEP 4A: Install librealsense
-	if [ $(dpkg-query -W -f='${Status}' librealsense2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-    sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
-		sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo xenial main" -u
-		sudo apt-get update
-		version="2.33.1-0~realsense0.2140"
-		sudo apt-get -y install librealsense2-udev-rules=${version}
-		sudo apt-get -y install librealsense2-dkms=1.3.11-0ubuntu1
-		sudo apt-get -y install librealsense2=${version}
-    		sudo apt-get -y install librealsense2-gl=${version}
-		sudo apt-get -y install librealsense2-utils=${version}
-		sudo apt-get -y install librealsense2-dev=${version}
-		sudo apt-get -y install librealsense2-dbg=${version}
-		sudo apt-mark hold librealsense2*
-	fi
+	# STEP 4A: Install Azure Kinect SDK
+	curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+	sudo apt-add-repository https://packages.microsoft.com/ubuntu/18.04/prod
+	sudo apt-get update
+	sudo apt install k4a-tools
+	sudo apt install libk4a1.4-dev
+	wget https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/scripts/99-k4a.rules
+	sudo mv 99-k4a.rules /etc/udev/rules.d/
 
-	# STEP 4B: Install realsense2 SDK from source (in a separate catkin workspace)
+	# STEP 4B: Install Azure Kinect ROS Driver
 	CAMERA_FOLDER=~/camera_ws
 	if [ ! -d "$CAMERA_FOLDER/src" ]; then
 		mkdir -p $CAMERA_FOLDER/src
 		cd $CAMERA_FOLDER/src/
 		catkin_init_workspace
 	fi
-	if [ ! -d "$CAMERA_FOLDER/src/realsense-ros" ]; then
+	if [ ! -d "$CAMERA_FOLDER/src/Azure_Kinect_ROS_Driver" ]; then
 		cd $CAMERA_FOLDER/src/
-    		git clone https://github.com/IntelRealSense/realsense-ros.git
-		cd realsense-ros/
-		git checkout 2.2.13
+    		git clone https://github.com/microsoft/Azure_Kinect_ROS_Driver.git
+		cd Azure_Kinect_ROS_Driver/
 	fi
 	if [ -d "$CAMERA_FOLDER/devel" ]; then
 		rm -rf $CAMERA_FOLDER/devel
@@ -396,8 +392,8 @@ fi
 if [ $INSTALL_TYPE == "full" ]; then
 	# STEP 7 - Dependencies and config for calibration
 	cd $LOCOBOT_FOLDER
-	chmod +x src/pyrobot/robots/LoCoBot/locobot_navigation/orb_slam2_ros/scripts/gen_cfg.py
-	rosrun orb_slam2_ros gen_cfg.py
+	chmod +x src/pyrobot/robots/LoCoBot/locobot_navigation/orb_slam2_ros/scripts/gen_cfg_azurekinect.py
+	rosrun orb_slam2_ros gen_cfg_azurekinect.py
 	HIDDEN_FOLDER=~/.robot
 	if [ ! -d "$HIDDEN_FOLDER" ]; then
 		mkdir ~/.robot
