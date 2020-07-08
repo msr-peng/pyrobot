@@ -215,10 +215,10 @@ def fr_v2(
             [slim.batch_norm], updates_collections=updates_collections
         ) as arg_sc:
             # Change the updates_collections for the conv normalizer_params to None
-            for i in range(len(arg_sc.keys())):
-                if "convolution" in arg_sc.keys()[i]:
-                    if "normalizer_params" in arg_sc.values()[i]:
-                        arg_sc.values()[i]["normalizer_params"][
+            for key in arg_sc.keys():
+                if "convolution" in key:
+                    if "normalizer_params" in key:
+                        key["normalizer_params"][
                             "updates_collections"
                         ] = updates_collections
                     else:

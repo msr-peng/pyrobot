@@ -20,8 +20,7 @@ def test_cmp_tfcode(test_dir):
     action_strings = {0: "stay", 1: "right", 2: "left", 3: "forward"}
     cmp_runner = CMPRunner("./model.ckpt-120003")
     tt = os.listdir(test_dir)
-    tt = filter(lambda x: "jpg" in x, tt)
-    tt.sort()
+    tt = sorted(x for x in tt if "jpg" in x)
     goal = np.loadtxt(os.path.join(test_dir, "goal.txt"))
     cmp_runner.set_new_goal(goal.tolist())
 
