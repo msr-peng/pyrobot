@@ -3,6 +3,10 @@
     <arg name="base" default="kobuki"/> 
     <param name="base" value="$(arg base)"/>
 
+    <!-- Options: realsense and azurekinect -->
+    <arg name="camera" default="realsense"/>
+    <param name="camera" value="$(arg camera)"/>
+
     <!-- Robot launch files -->
     <include file="$(find locobot_control)/launch/main.launch">
         <arg name="use_base" value="false"/>
@@ -10,9 +14,20 @@
         <arg name="use_camera" value="true"/>
         <arg name="use_rviz" value="true"/>
         <arg name="base" value="$(arg base)"/>
+	<arg name="camera" value="$(arg camera)"/>
     </include>
     
     <!-- Launch AR tracker -->
-    <include file="$(find locobot_calibration)/launch/ar_track_alvar_calibration.launch"/>
+    <group if="$(eval camera == 'realsense')">
+        <include file="$(find locobot_calibration)/launch/ar_track_alvar_calibration.launch"/>
+            <arg name="camera" value="$(arg camera)"/>
+        </include>
+    </group>
+    <group if="$(eval camera == 'azurekinect')">
+        <include file="$(find locobot_calibration)/launch/ar_track_alvar_calibration_azurekinect.launch">
+            <arg name="camera" value="$(arg camera)"/>
+        </include>
+    </group>
+
 
 </launch>
