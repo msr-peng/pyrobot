@@ -28,7 +28,7 @@ flags.DEFINE_float("goal_x", 0, "Desired goal x (in cm).")
 flags.DEFINE_float("goal_y", 0, "Desired goal y (in cm).")
 flags.DEFINE_float("goal_t", 0, "Desired goal theta (in radians).")
 flags.DEFINE_string("model_path", "./model.ckpt-120003", "Path for model")
-flags.DEFINE_string("botname", "locobot", "Robot name: locobot, locobot_lite.")
+flags.DEFINE_string("botname", "azure_kinect", "Robot name: locobot, locobot_lite, azure_kinect.")
 flags.DEFINE_string(
     "logdir", None, "Where to log results, if None results are not logged."
 )
@@ -114,7 +114,8 @@ def main(_):
     init_state = np.array(bot.base.get_state("odom"))
     for i in range(100):
         rgb = bot.camera.get_rgb()
-        img = cv2.resize(rgb, (0, 0), fx=0.5, fy=0.5)
+        rgb = rgb[:, 160:1120]
+        img = cv2.resize(rgb, (0, 0), fx=0.333, fy=0.333)
         img = img[np.newaxis, np.newaxis, np.newaxis, :, :, ::-1]
         img = img.astype(np.float32)
         model_action, next_state = cmp_runner.compute_action(img)
