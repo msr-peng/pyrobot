@@ -1,0 +1,16 @@
+<launch>
+    <arg name="launch_azurekinect" default="true"/>
+    <group if="$(arg launch_azurekinect)">
+        <include file="$(find locobot_control)/launch/azurekinect_driver.launch">
+            <arg name="point_cloud" value="false"/>
+            <arg name="rgb_point_cloud" value="false"/>
+        </include>
+    </group>
+    <node name="orb_slam2_rgbd" pkg="orb_slam2_ros" type="orb_slam2_rgbd"
+          output="screen">
+        <param name="voc_file" value="$(env ORBSLAM2_LIBRARY_PATH)/Vocabulary/ORBvoc.bin"/>
+        <param name="settings_file" value="$(find orb_slam2_ros)/cfg/azurekinect.yaml"/>
+        <param name="rgb_topic" value="/rgb/image_raw"/>
+        <param name="depth_topic" value="/depth_to_rgb/image_raw"/>
+    </node>
+</launch>
