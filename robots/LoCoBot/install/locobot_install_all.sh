@@ -188,9 +188,9 @@ if [ $INSTALL_TYPE == "full" ]; then
 	curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 	sudo apt-add-repository https://packages.microsoft.com/ubuntu/18.04/prod
 	sudo apt-get update
-	sudo apt install k4a-tools
-	sudo apt install libk4a1.4-dev
-	wget https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/scripts/99-k4a.rules
+	sudo apt install k4a-tools -y
+	sudo apt install libk4a1.4-dev -y
+	wget https://raw.githubusercontent.com/microsoft/Azure-Kinect-Sensor-SDK/develop/scripts/99-k4a.rules
 	sudo mv 99-k4a.rules /etc/udev/rules.d/
 
 	# STEP 4B: Install Azure Kinect ROS Driver
@@ -232,9 +232,9 @@ if [ ! -d "$LOCOBOT_FOLDER/src" ]; then
 fi
 if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot" ]; then
 	cd $LOCOBOT_FOLDER/src
-	git clone https://github.com/facebookresearch/pyrobot.git
+	git clone https://github.com/msr-peng/pyrobot.git
 	cd pyrobot
-	git checkout master
+	git checkout azure_kinect
 	git submodule update --init --recursive
   if [ $LOCOBOT_PLATFORM == "cmu" ]; then
     cd $LOCOBOT_FOLDER/src/pyrobot/robots/LoCoBot/locobot_description/urdf
