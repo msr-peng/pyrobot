@@ -178,7 +178,14 @@ bool LoCoBotController::loadDynamixels(void) {
 
   for (auto const &dxl:dynamixel_name_2ids_) {
     uint16_t model_number = 0;
+    ROS_INFO("************************ start ping Motor ID : '%d' ************************", dxl.second);
     result = dxl_wb_->ping((uint8_t) dxl.second, &model_number, &log);
+    for (size_t i=0; i<100; ++i) {
+      result = dxl_wb_->ping((uint8_t) dxl.second, &model_number, &log);
+      if (result) {
+        break;
+      }
+    }
     if (!result) {
       ROS_ERROR("%s", log);
       ROS_ERROR("Can't find Dynamixel ID '%d'", dxl.second);
@@ -186,6 +193,7 @@ bool LoCoBotController::loadDynamixels(void) {
     } else {
       ROS_INFO("Name : %s, ID : %d, Model Number : %d", dxl.first.c_str(), dxl.second, model_number);
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
   return result;
 }
@@ -1440,8 +1448,8 @@ int main(int argc, char **argv) {
                                                      &LoCoBotController::publishCallback, &dynamixel_controller);
   ros::Timer gripper_timer = node_handle.createTimer(ros::Duration(dynamixel_controller.getPublishPeriod()),
                                                      &LoCoBotController::gripperController, &dynamixel_controller);
-  ros::Timer hardware_timer2 = node_handle.createTimer(ros::Duration(dynamixel_controller.getPublishPeriod()),
-                                                      &LoCoBotController::hardwareStatusPublish, &dynamixel_controller);
+  // ros::Timer hardware_timer2 = node_handle.createTimer(ros::Duration(dynamixel_controller.getPublishPeriod()),
+  //                                                    &LoCoBotController::hardwareStatusPublish, &dynamixel_controller);
   bool status;
 
   ros::Rate loop_rate(50);
