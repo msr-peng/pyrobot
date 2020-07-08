@@ -27,6 +27,9 @@
 #include <unistd.h>
 #include "locobot_control/locobot_controller.h"
 
+#include <thread>
+#include <chrono>
+
 static const uint8_t CURRENT_CONTROL_MODE                  = 0;
 static const uint8_t POSITION_CONTROL_MODE                 = 3;
 // based on https://github.com/ROBOTIS-GIT/dynamixel-workbench/blob/676880b4900877e4d6b68f21b87b0153cf04fbe3/dynamixel_workbench_toolbox/src/dynamixel_workbench_toolbox/dynamixel_item.cpp#L813
