@@ -8,6 +8,7 @@
     <arg name="teleop" default="false"/>
     <arg name="use_rviz" default="true"/>
     <arg name="base" default="kobuki"/> <!-- Options: create and kobuki -->
+    <arg name="camera" default="realsense"/> <!-- Options: azurekinect and realsense -->
 
     <param name="use_camera" value="$(arg use_camera)"/>
     <param name="use_arm" value="$(arg use_arm)"/>
@@ -16,25 +17,46 @@
     <param name="use_base" value="$(arg use_base)"/>
     <param name="torque_control" value="$(arg torque_control)"/>
     <param name="teleop" value="$(arg teleop)"/>
+    <param name="camera" value="$(arg camera)"/>
 
 
 
     <group unless="$(arg use_sim)">
 
         <group if="$(arg use_camera)">
-            <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
-                <arg name="enable_pointcloud" value="false"/>
-            </include>
+            <group if="$(eval camera == 'realsense')">
+                <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
+                    <arg name="enable_pointcloud" value="false"/>
+                </include>
+            </group>
+            <group if="$(eval camera == 'azurekinect')">
+                <include file="$(find locobot_control)/launch/azurekinect_driver.launch">
+                    <arg name="point_cloud" value="false"/>
+                    <arg name="rgb_point_cloud" value="false"/>
+                </include>
+            </group>
         </group>
 
         <group if="$(arg use_vslam)">
             <group if="$(arg use_camera)">
-                  <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch">
-                      <arg name="launch_realsense" value="false"/>
-                  </include>
+                <group if="$(eval camera == 'realsense')">
+                <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch">
+                    <arg name="launch_realsense" value="false"/>
+                </include>
+                </group>
+                <group if="$(eval camera == 'azurekinect')">
+                <include file="$(find locobot_control)/launch/azurekinect_driver.launch">
+                    <arg name="launch_azurekinect" value="false"/>
+                </include>
+                </group>
             </group>
             <group unless="$(arg use_camera)">
-                  <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch"/>
+                <group if="$(eval camera == 'realsense')">
+                    <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch"/>
+                </group>
+                <group if="$(eval camera == 'azurekinect')">
+                    <include file="$(find locobot_control)/launch/azurekinect_driver.launch"/>
+                </group>
             </group>
         </group>
 
