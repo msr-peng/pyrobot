@@ -188,8 +188,7 @@ if [ $INSTALL_TYPE == "full" ]; then
 	curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 	sudo apt-add-repository https://packages.microsoft.com/ubuntu/18.04/prod
 	sudo apt-get update
-	sudo apt install k4a-tools -y
-	sudo apt install libk4a1.4-dev -y
+	ACCEPT_EULA=Y sudo apt-get install -y k4a-tools libk4a1.4-dev
 	wget https://raw.githubusercontent.com/microsoft/Azure-Kinect-Sensor-SDK/develop/scripts/99-k4a.rules
 	sudo mv 99-k4a.rules /etc/udev/rules.d/
 
